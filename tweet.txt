@@ -1,0 +1,7 @@
+[% title %]
+
+[% hashtags %]
+
+👉 Please retweet if you ❤ my blog. Thanks! 👍
+
+[% url %]
