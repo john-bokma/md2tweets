@@ -8,3 +8,11 @@ For example:
 md2tweets --template-filename tweet.txt --blog-url https://plurrrr.com/ \
     plurrrr.md > tweets.txt
 ```
+
+Docker example:
+
+```
+docker run --rm --volume "`pwd`:/data:ro" --user `id -u`:`id -g` \
+    md2tweets --template-filename tweet.txt --blog-url https://plurrrr.com/ \
+        plurrrr.md > tweets.txt
+```
