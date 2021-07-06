@@ -87,7 +87,8 @@ sub output_tweets {
     ) )[ 0 ];
 
     for my $day ( @$days ) {
-        my %tags;
+        my %seen;
+        my @hashtags;
         my @articles;
         my $article_no = 1;
         for my $article ( @{ $day->{ articles } } ) {
@@ -100,24 +101,25 @@ sub output_tweets {
 
                 exists $meta->{tags} or die 'No tags are specified';
                 validate_tags( $meta->{ tags } );
-                $tags{ $_ }++ for @{ $meta->{ tags } };
+                for my $tag ( @{ $meta->{ tags } } ) {
+                    next if ++$seen{ $tag } > 1;
+
+                    my @parts = split / /, $tag;
+                    if ( @parts > 1 ) {
+                        push @hashtags, '#' . join(
+                            '', map { ucfirst } @parts
+                        );
+                    }
+                    else {
+                        push @hashtags, "#$tag";
+                    }
+                }
             }
             catch {
                 my ( $error ) = $_ =~ /(.*) at /s;
                 die "$error in article $article_no of $day->{ date }\n";
             };
             $article_no++;
-        }
-
-        my @hashtags;
-        for my $tag ( keys %tags ) {
-            my @parts = split / /, $tag;
-            if ( @parts > 1 ) {
-                push @hashtags, '#' . join( '', map { ucfirst } @parts );
-            }
-            else {
-                push @hashtags, "#$tag";
-            }
         }
 
         my ( $year, $month, $day_number ) = split_date( $day->{ date } );
